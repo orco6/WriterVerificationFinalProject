@@ -1,0 +1,125 @@
+<%- include("partials/header") %>
+
+<h1>History</h1>
+<form class="" action="/search-history" method="post">
+  <div class="query">
+    <div class="dateChoose" >
+      <label class="form-label" for="date">Date</label>
+      <input type="date" id="date" name="date" value="">
+    </div>
+    <div class="documentChoose">
+      <select class="form-select" id="documentName" name="document" value="">
+        <option value="all">All Documents</option>
+        <%  docs.forEach(doc => { %>
+            <option value="<%=doc.name%>" ><%= doc.name %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="searchButton">
+      <button class="btn btn-primary" type="submit" name="button">Search&ensp;<i class="fas fa-search"></i></button>
+    </div>
+  </div>
+</form>
+
+<div class="result-head">
+  <%if(records.length != 0){%>
+    <h3 class="total-records">Total:&emsp;<%=records.length%></h3>
+    <form action="/export-to-csv" method="post">
+        <button type="submit" class="btn btn-success history-buttons" value="<%=JSON.stringify(records)%>" name="button">Export All to CSV</button>
+    </form>
+    <form action="delete-history" method="post">
+        <button type="submit" class="btn btn-danger history-buttons" value="<%=JSON.stringify(records)%>" name="button">Clear All</button>
+    </form>
+  <%} else { %>
+    <p class="zero-records">We Could'nt Find Any Records...</p>
+  <%}%>
+
+
+
+</div>
+<div class="history-records">
+<%  records.forEach((record,i) => {  %>
+    <button type="button" class="collapsible"><i class="fas fa-chevron-down"></i>&emsp;<%=record.date%>&emsp;<%=record.target%></button>
+    <div class="content" id=<%=i%>>
+      <h5><%=record.date%></h5>
+      <div style="display: flex;">
+        <h5 id="resultTargetDocumentName" style="padding-right: 70px;">Target Document Selected: &emsp;<%=record.target%></h5>
+        <h5 id="resultModelName">Model: &emsp;<%=record.model%></h5>
+      </div>
+      <div class="single-record-buttons">
+        <form action="/export-to-csv" method="post">
+          <button type="submit" class="btn btn-success history-buttons" value="<%=JSON.stringify(record)%>" name="button">Export to CSV</button>
+        </form>
+        <form action="delete-history" method="post">
+            <button type="submit" class="btn btn-danger history-buttons" value="<%=JSON.stringify(record)%>" name="button"><i class="fas fa-trash-alt"></i></button>
+        </form>
+      </div>
+
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Document Name</th>
+            <th scope="col">Compatibility</th>
+            <th scope="col">Model Assessment</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <%record.compare.forEach((document,i) => {%>
+            <% var tableClass = "table-success" %>
+            <% if (document.compatibility < 50){ %>
+            <%  tableClass = "table-danger";%>
+            <%} else if(document.compatibility >= 50 && document.compatibility < 75){%>
+            <%  tableClass = "table-warning"; %>
+            <%}%>
+            <tr class=<%=tableClass%>>
+              <th scope="row"><%=i+1%></th>
+              <td><%=document.name%></td>
+              <td><%=document.compatibility%></td>
+              <td><%=document.assessment%></td>
+            </tr>
+          <%})%>
+        </tbody>
+      </table>
+    </div>
+<%  }); %>
+  <div id="slide" style="display:none">
+    <h1>Hello</h1>
+  </div>
+
+</div>
+
+<script>
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+
+    this.classList.toggle("active-record");
+    var content = $(this).next();
+    content.slideToggle("slow");
+    this.firstChild.classList.toggle("fa-chevron-down");
+    this.firstChild.classList.toggle("fa-chevron-up");
+
+  });
+
+  // var coll = document.getElementsByClassName("collapsible");
+  // if(coll.length >= 6){
+  //   document.getElementsByClassName("body")[0].style.height = "max-content";
+  //   document.getElementsByClassName("footer")[0].style.position = "sticky";
+  // }
+
+  // function pageHeightToggle(){
+  //   let bodyElemnent = document.getElementsByClassName("body")[0]
+  //   if(bodyElemnent.style.height==="max-content"){
+
+  //   }
+  // }
+
+}
+</script>
+
+<%- include("partials/footer") %>

@@ -1,0 +1,19 @@
+<%- include("partials/header-admin") %>
+    <div class="upload-box upload-model">
+        <h3 style="text-align: center;">Upload new default model</h3>
+        <div class="input-group mb-3" >
+            <form action="/admin-upload-model" method="post" enctype="multipart/form-data">
+            <div class="upload">
+              <input  type="file" name="fileToUpload" class="form-control" id="inputGroupFile02">
+              <button  type=submit class="input-group-text" for="inputGroupFile02" onclick="upload()">Upload</button>
+            </div>
+          </form>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    function upload(){
+      document.getElementById("loading").style.display = "block";
+    }
+</script>
+<%- include("partials/footer") %>

@@ -1,0 +1,167 @@
+<%- include("partials/header") %>
+
+<p value="<%=docs%>" id="docs" style="display:none"></p>
+
+<div id="loading">
+  <img id="loading-image" src="Loading.gif" alt="Loading..." />
+  <h5>Your documents are being process...</h5>
+</div>
+
+<div id="crop">
+    <img id="crop-image" src="Document2.png" width=300 height=400 alt="">
+</div>
+
+<div id="info" class="info-window">
+  <button type="button" class="btn-close" onclick="closeInfoWindow()" style="margin-top: 2px; margin-left: 318px" name="button"></button>
+  <div id="carouselExampleIndicators" class="carousel slide" data-bs-interval="false" style="height: 400px;">
+  <div class="carousel-indicators" style="margin-bottom: 0px;">
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" aria-label="Slide 5"></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <div id="info-content" class="info-compare">
+        <h5>Compare Page</h5>
+        <p>In this page you can compare your documents!</p>
+        <p>What does it means?</p>
+        <p>Say you have 2 handwritten documents. Our model will proccess them and give you back an assesment, if the 2 document were written by the same person or not!</p>
+        <p>And only by completing few simple steps!</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div id="info-content" class="info-compare">
+        <h5>Step 1: Choosing Documents</h5>
+        <p>By Choosing a document under the "Target document" section, The document you chose will be compare with every single document you added in the "compare section".</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div id="info-content" class="info-compare" style="height: 270px;">
+        <h5>Step 2: Select handwritten area</h5>
+        <p>After you chose a document from the list, a new window will open.</p>
+        <p>In this new window you have to select the area of the handwritten inside the document.</p>
+      </div>
+      <div id="info-warning">
+        <p>Notice: This step is very improtant!. Try to select the area in the best way possible!</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div id="info-content" class="info-compare">
+        <h5>Step 3: Select a Model</h5>
+        <p>The model you will choose, thats the model that will proccess your docuemnts.</p>
+        <p>If you havent uploaded any model of your own, you can always use our model, with 84% accuracy!</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div id="info-content" class="info-compare">
+        <h5>Step 4: Compare and get results!</h5>
+        <p>The final step is just pressing on the large green button "compare", and the data will be send to our server for proccessing.</p>
+        <p>This step can take a few seconds to complete. On complete, a new section will be shown under, presenting the results.</p>
+      </div>
+    </div>
+  </div>
+  <!-- <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button> -->
+</div>
+</div>
+
+
+
+<div class="row select-body">
+  <div style="float: right;">
+      <i onclick="openCloseInfoWindow()" style="float: right; cursor: pointer; color: Dodgerblue;" class="fas fa-info-circle fa-lg"></i>
+  </div>
+  <div class="col lg-5">
+    <h3 id="test" >Choose Target Document</h3>
+    <div class="choose-box">
+        <select class="form-select" id="targetDoc">
+        <%  docs.forEach(doc => { %>
+            <option data-name="<%= doc.name %>" data-id="<%=doc._id%>" value="data:image/<%=doc.img.contentType%>;base64,<%=doc.img.data.toString('base64')%>" ><%= doc.name %></option>
+        <% }); %>
+        </select>
+        <button class="btn btn-primary" onclick="cropImage_trg()" type="button" name="button">choose</button>
+    </div>
+    <div id="zero-message-target" class="zero-target-doc">
+      <p>You hav'nt selected target document</p>
+    </div >
+    <div id="chosen-doc" class="image-box"></div>
+    <!-- <div id="chosen-doc" class="image-box">
+      <img src="Document2.png" id="targetImg" name="" alt="">
+    </div> -->
+  </div>
+  <div class="col-lg-7 verticalLine">
+    <h3>Choose Documents To Compare</h3>
+    <div class="choose-box">
+      <select class="form-select" id="compareDoc">
+        <%  docs.forEach(doc => { %>
+            <option data-id="<%=doc._id%>" data-name="<%=doc.name%>" value="data:image/<%=doc.img.contentType%>;base64,<%=doc.img.data.toString('base64')%>" ><%= doc.name %></option>
+        <% }); %>
+      </select>
+      <button class="btn btn-primary" onClick="cropImage_cmpr()" type="button" name="button">Add</button>
+    </div>
+    <div class="img-box">
+      <h5 id="count">Total: 0</h5>
+      <div id="zero-message" class="zero-docs-compare">
+        <p>You hav'nt added any documents</p>
+      </div>
+      <div id="carouselExampleDark" class="carousel carousel-dark carousel-compare" data-bs-interval="false">
+        <div id="items" class="carousel-inner">
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+      </div>
+    </div>
+    <div class="horizontalLine">
+      <div class="row">
+        <div class="col-sm-3">
+          <select id="selectModel" name="selectedModel" class="form-control" onfocus='this.size=2;' onblur='this.size=1;' onchange='this.size=1; this.blur();'>
+            <% models.forEach(model=>{%>
+              <option value=<%=model%>> <%=model%> </option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-sm-9">
+          <button class="btn btn-success btn-cmpr" type="button" onclick="getDocuments()" name="button" >Compare</button>
+        </div>
+      </div>
+    </div>
+</div>
+    <div class="results-box">
+      <h3>Results</h3>
+      <div style="display: flex;">
+        <h5 id="resultTargetDocumentName" style="padding-right: 85px;">Target Document Selected: </h5>
+        <h5 id="resultModelName">Model: </h5>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Document Name</th>
+            <th scope="col">Compatibility</th>
+            <th scope="col">Model Assessment</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+        </tbody>
+      </table>
+    </div>
+    <script type="text/javascript" src="Scripts/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="scripts/compare.js"></script>
+
+
+<%- include("partials/footer") %>
